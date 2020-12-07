@@ -39,6 +39,15 @@ public class Location {
         this.lon = lon;
     }
 
+    public Location(@NotNull Double lat, @NotNull Double lon, String address, String city, String state, String zip) {
+        this.lat = lat;
+        this.lon = lon;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+    }
+
     public Double getLat() {
         return lat;
     }
