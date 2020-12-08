@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CarServiceTest {
 
@@ -30,28 +30,28 @@ public class CarServiceTest {
     private PriceClient mockPriceClient;
 
     @Before
-    public void init(){
+    public void init() {
         MockitoAnnotations.initMocks(this);
         carService = new CarService(mockCarRepo, mockMapsClient, mockPriceClient);
     }
 
     @Test
-    public void shouldThrownExceptionWhenFindWithNoneExistId(){
+    public void shouldThrownExceptionWhenFindWithNoneExistId() {
         Long nonExistId = Long.valueOf(1000);
         when(mockCarRepo.findById(nonExistId)).thenReturn(Optional.empty());
-        assertThrows(CarNotFoundException.class,()->carService.findById(nonExistId));
+        assertThrows(CarNotFoundException.class, () -> carService.findById(nonExistId));
     }
 
     @Test
-    public void shouldReturnCarWithLocationAndPriceWhenFindWithValidId(){
+    public void shouldReturnCarWithLocationAndPriceWhenFindWithValidId() {
         Long validId = Long.valueOf(1);
         Car car = new Car();
-        Location location = new Location(Double.valueOf(30),Double.valueOf(20));
+        Location location = new Location(Double.valueOf(30), Double.valueOf(20));
 
         car.setId(validId);
         car.setLocation(location);
 
-        Location locationReturned = new Location(location.getLat(), location.getLon(),"844 No Colony Road","Wallingford","CT","6492");
+        Location locationReturned = new Location(location.getLat(), location.getLon(), "844 No Colony Road", "Wallingford", "CT", "6492");
         String priceReturned = "USD 10026.59";
 
         when(mockCarRepo.findById(validId)).thenReturn(Optional.of(car));
@@ -59,8 +59,25 @@ public class CarServiceTest {
         when(mockPriceClient.getPrice(validId)).thenReturn(priceReturned);
 
         Car returnCar = carService.findById(validId);
-        assertEquals(validId,returnCar.getId());
-        assertEquals(locationReturned,returnCar.getLocation());
-        assertEquals(priceReturned,returnCar.getPrice());
+        assertEquals(validId, returnCar.getId());
+        assertEquals(locationReturned, returnCar.getLocation());
+        assertEquals(priceReturned, returnCar.getPrice());
+    }
+
+    @Test
+    public void shouldThrownExceptionWhenDeleteWithNoneExistId() {
+        Long nonExistId = Long.valueOf(1000);
+        when(mockCarRepo.findById(nonExistId)).thenReturn(Optional.empty());
+        assertThrows(CarNotFoundException.class, () -> carService.delete(nonExistId));
+    }
+
+    @Test
+    public void shouldDeleteCarWithValidId() {
+        Long validId = Long.valueOf(1);
+
+        when(mockCarRepo.findById(validId)).thenReturn(Optional.of(new Car()));
+
+        carService.delete(validId);
+        verify(mockCarRepo,times(1)).deleteById(validId);
     }
 }
