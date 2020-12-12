@@ -1,8 +1,10 @@
 package com.udacity.vehicles.api;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.udacity.vehicles.client.maps.MapsClient;
@@ -76,7 +78,13 @@ public class CarControllerTest {
                         .content(json.write(car).getJson())
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("['id']",is(1)))
+                .andExpect(jsonPath("['condition']",is("USED")))
+                .andExpect(jsonPath("['details']['body']",is("sedan")))
+                .andExpect(jsonPath("['details']['manufacturer']['name']",is("Chevrolet")))
+                .andExpect(jsonPath("['location']['lat']",is(40.730610)))
+                .andExpect(jsonPath("['location']['lon']",is(-73.935242)));
     }
 
     /**
@@ -91,7 +99,13 @@ public class CarControllerTest {
                         .content(json.write(car).getJson())
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("['id']",is(1)))
+                .andExpect(jsonPath("['condition']",is("USED")))
+                .andExpect(jsonPath("['details']['body']",is("sedan")))
+                .andExpect(jsonPath("['details']['manufacturer']['name']",is("Chevrolet")))
+                .andExpect(jsonPath("['location']['lat']",is(40.730610)))
+                .andExpect(jsonPath("['location']['lon']",is(-73.935242)));
     }
 
     /**
@@ -102,8 +116,14 @@ public class CarControllerTest {
     public void listCars() throws Exception {
         mvc.perform(
                 get(new URI("/cars")))
-                .andExpect(status().isOk());
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("['_embedded']['carList']",hasSize(1)))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['id']",is(1)))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['condition']",is("USED")))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['details']['body']",is("sedan")))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['details']['manufacturer']['name']",is("Chevrolet")))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['location']['lat']",is(40.730610)))
+                .andExpect(jsonPath("['_embedded']['carList'][0]['location']['lon']",is(-73.935242)));
     }
 
     /**
@@ -114,8 +134,13 @@ public class CarControllerTest {
     public void findCar() throws Exception {
         mvc.perform(
                 get(new URI("/cars/1")))
-                .andExpect(status().isOk());
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("['id']",is(1)))
+                .andExpect(jsonPath("['condition']",is("USED")))
+                .andExpect(jsonPath("['details']['body']",is("sedan")))
+                .andExpect(jsonPath("['details']['manufacturer']['name']",is("Chevrolet")))
+                .andExpect(jsonPath("['location']['lat']",is(40.730610)))
+                .andExpect(jsonPath("['location']['lon']",is(-73.935242)));
     }
 
     /**
