@@ -1,5 +1,6 @@
 package com.udacity.pricing.controller;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -43,6 +45,9 @@ public class PricingControllerTest {
         mvc.perform(get("/services/price")
                 .param("vehicleId","1")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("['currency']",is("USD")))
+                .andExpect(jsonPath("['price']",is(2000)))
+                .andExpect(jsonPath("['vehicleId']",is(1)));
     }
 }
